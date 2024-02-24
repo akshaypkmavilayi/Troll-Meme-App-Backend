@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LoginRepository extends JpaRepository<LoginEntity, Integer> {
-	@Query("SELECT l FROM LoginEntity l WHERE l.emailId = :e and l.password = :p")
+	@Query("SELECT l FROM LoginEntity l WHERE l.username = :e and l.password = :p")
 	LoginEntity findByEmailAndPassword(@Param("e") String email,@Param("p") String password);
 
+	LoginEntity findByUsername(String username);
 }

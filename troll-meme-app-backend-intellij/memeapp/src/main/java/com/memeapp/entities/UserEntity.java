@@ -15,11 +15,12 @@ public class UserEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userId;
-	private String userName;
+
+	private String emailId;
+
 	private String gender;
 	
-	
-	
+
 	public int getUserId() {
 		return userId;
 	}
@@ -27,10 +28,10 @@ public class UserEntity {
 		this.userId = userId;
 	}
 	public String getUserName() {
-		return userName;
+		return emailId;
 	}
 	public void setUserName(String userName) {
-		this.userName = userName;
+		this.emailId = userName;
 	}
 	public String getGender() {
 		return gender;
@@ -38,8 +39,5 @@ public class UserEntity {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	
-	
-
 	
 }
