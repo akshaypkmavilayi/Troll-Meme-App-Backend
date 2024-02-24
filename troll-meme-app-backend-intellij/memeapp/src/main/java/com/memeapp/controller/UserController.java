@@ -2,6 +2,7 @@ package com.memeapp.controller;
 
 import java.util.List;
 
+import com.memeapp.dao.UserDetailsDao;
 import com.memeapp.entities.LoginEntity;
 import com.memeapp.entities.UserAndLogin;
 import com.memeapp.entities.UserEntity;
@@ -9,6 +10,7 @@ import com.memeapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,27 +28,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 	@Autowired
 	private UserService userService;
-	
-	@PostMapping("/register-user")
-	public UserEntity addUser(@RequestParam("name") String userName
-			, @RequestParam("gender") String userGender,
-							  @RequestParam("email") String userEmail,
-							  @RequestParam("password") String userPassword) {
-		
-		
-		
-		UserEntity user= new UserEntity();
-		LoginEntity login = new LoginEntity();
-		UserAndLogin userAndLogin = new UserAndLogin();
-		user.setUserName(userName);
-		user.setGender(userGender);
-		login.setEmailId(userEmail);
-		login.setPassword(userPassword);
-		userAndLogin.setUser(user);
-		userAndLogin.setLogin(login);
-		userService.addUser(userAndLogin);
-		 return user;
-		}
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+
+	@PostMapping("/register")
+	public ResponseEntity addUser(@RequestBody UserDetailsDao userDetailsDao) {
+
+		String encryptedPassword = passwordEncoder.encode(userDetailsDao.getPassword());
+		userDetailsDao.setPassword(encryptedPassword);
+
+		userService.addUser(userDetailsDao);
+		return new ResponseEntity(HttpStatus.OK);
+	}
+
+
 	@PutMapping("/update-user")
 	public UserEntity updateUser(@RequestParam("userid") int userid,@RequestParam("loginid") int loginid,@RequestParam("name") String userName
 			,@RequestParam("gender") String userGender,
@@ -61,12 +58,11 @@ public class UserController {
 		user.setUserName(userName);
 		user.setGender(userGender);
 		login.setLogId(loginid);
-		login.setEmailId(userEmail);
 		login.setPassword(userPassword);
 		userAndLogin.setUser(user);
 		userAndLogin.setLogin(login);
 		
-		return userService.addUser(userAndLogin);
+		return null;
 	}
 	
 	
@@ -95,7 +91,6 @@ public class UserController {
 	public LoginEntity Login(@RequestParam("email") String email,@RequestParam("password") String password){
 		LoginEntity login = new LoginEntity();
 		System.out.println(email+" "+password);
-		login.setEmailId(email);
 		login.setPassword(password);
 		return userService.validateLogin(login);
 		
