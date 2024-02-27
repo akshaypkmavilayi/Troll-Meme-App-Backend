@@ -42,7 +42,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/meme")
-@CrossOrigin(origins = "http://localhost:4200")
 public class MemeController {
 	
 	@Autowired

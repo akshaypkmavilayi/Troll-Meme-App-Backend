@@ -3,6 +3,7 @@ package com.memeapp.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,10 +29,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.authorizeRequests().antMatchers("/user/register").permitAll()
+        http.csrf().disable()
+                /** facing an issue with CORS policy in frontend, added cors(Customizer.withDefaults()) to resolve this issue */
+                .cors(Customizer.withDefaults())
+                .authorizeRequests()
+                .antMatchers("**/user/register", "/login", "/meme").permitAll() // Allow access to public endpoints
+                .antMatchers("/user/view-all-user").hasAnyRole("ADMIN") // Require authentication for protected endpoint
+                .anyRequest().permitAll() // Allow access to all other endpoints
                 .and()
-                .authorizeRequests().antMatchers("/user/view-all-user").authenticated().anyRequest().hasAnyRole("ADMIN").and().formLogin().permitAll();
+                .formLogin().loginPage("/login").permitAll();
     }
 
     //    @Bean

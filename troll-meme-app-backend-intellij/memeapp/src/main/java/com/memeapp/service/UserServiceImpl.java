@@ -1,10 +1,8 @@
 package com.memeapp.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+import com.memeapp.dao.LoginDao;
 import com.memeapp.dao.UserDetailsDao;
 import com.memeapp.entities.Authorities;
 import com.memeapp.entities.LoginEntity;
@@ -50,13 +48,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 	@Override
 	public List<LoginEntity> getAllUsers() {
-		List<LoginEntity> userList = logRepo.findAll();
-		return userList;
+
+		return new ArrayList<>(logRepo.findAll());
 	}
 	@Override
 	public LoginEntity findUserById(int id) {
 		Optional<LoginEntity> user = logRepo.findById(id);
-		return user.get();
+        return user.orElse(null);
 	}
 	@Override
 	public void deleteUserById(int id) {
@@ -73,16 +71,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //		return user;
 //	}
 	@Override
-	public LoginEntity validateLogin(LoginEntity login) {
+	public String validateLogin(LoginDao loginDao) {
+		LoginEntity login = new LoginEntity();
+		login.setUsername(loginDao.getUsername());
+		login.setPassword(loginDao.getPassword());
 
-//		LoginEntity existingUser = logRepo.findByEmailAndPassword(login.getEmailId(), login.getPassword());
-//		if(existingUser != null) {
-//			return existingUser;
-//		}else {
-//			return null;
-//		}
-//
-	 return null;
+		loadUserByUsername(loginDao.getUsername());
+
+		LoginEntity existingUser = logRepo.findByUsername(login.getUsername());
+
+	 return "login data received";
 	}
 
 
